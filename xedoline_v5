@@ -110,7 +110,6 @@ if(vt[0]!=vt[1]){
         delay(10);
       }while(vt_back == 100 && deLay <= 500);
   }
-  }
   }    
   else {
     //Serial.println(vt[1]);
@@ -148,7 +147,7 @@ void read_sensor_()
     vt_back = 101;
   else if ((sensor[0] == 0) && (sensor[3] == 0) && (sensor[1] == 1) && (sensor[2] == 0))
     vt_back = 101;
-  else if ((sensor[0] == 0) && (sensor[3] == 0) && (sensor[1] == 1) && (sensor[2] == ))
+  else if ((sensor[0] == 0) && (sensor[3] == 0) && (sensor[1] == 1) && (sensor[2] == 1))
     vt_back = 101;
   else if ((sensor[0] == 0) && (sensor[3] == 0) && (sensor[1] == 1) && (sensor[2] == 1))
     vt_back = 111;
