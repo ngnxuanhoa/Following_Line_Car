@@ -105,14 +105,14 @@ void turn(float angle, bool turn_direction) {
     
     // Move & stop
     if (turn_direction) {
-      right(50);
+      right(80);
     }
     else {
-      left(50);
+      left(80);
     }
     delay(100);
-    right(0);
-    delay(100);
+    //right(0);
+    //delay(100);
     
     // Measure heading again
     float heading = get_heading();
@@ -123,6 +123,8 @@ void turn(float angle, bool turn_direction) {
     else {
       diff_heading = heading - target_heading;
     }
+    Serial.println(target_heading);
+    Serial.println(heading);
     Serial.print("Difference heading (degrees): "); Serial.println(diff_heading);
     
     if (diff_heading < 0 && !target_reached) {
@@ -156,7 +158,12 @@ float get_heading() {
    
   // Convert radians to degrees for readability.
   float headingDegrees = heading * 180/M_PI; 
-  return headingDegrees;
+  if(headingDegrees > 360)
+    return (headingDegrees - 360);
+  else if (headingDegrees < 0)
+    return (360 + headingDegrees);
+  else return headingDegrees;
+  
 }
 
 // Function to command a given motor of the robot
