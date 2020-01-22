@@ -2,9 +2,12 @@
 #include <Wire.h>
 #include <Adafruit_Sensor.h>
 #include <Adafruit_HMC5883_U.h>
+#include <Arduino.h>
+#include <HMC5883L_Simple.h>
 
 // Create instance of digital compass
 Adafruit_HMC5883_Unified mag = Adafruit_HMC5883_Unified(12345);
+HMC5883L_Simple Compass;
 
 // Motor pins
 int ENA = 6;
@@ -29,7 +32,8 @@ void setup(void)
 {
   // Start Serial
   Serial.begin(9600);
-  
+  Wire.begin();
+    
   // Declare motor pins as outputs
   pinMode(5,OUTPUT);
   pinMode(6,OUTPUT);
@@ -47,7 +51,10 @@ void setup(void)
   // Initialise direction variables
   turn_init = false;
   target_reached = false;
-  
+  Compass.SetDeclination(105, 50, 'E');
+  Compass.SetSamplingMode(COMPASS_SINGLE); 
+  Compass.SetScale(COMPASS_SCALE_130);
+  Compass.SetOrientation(COMPASS_HORIZONTAL_X_NORTH);
 }
 
 void loop(void) 
@@ -136,9 +143,10 @@ void turn(float angle, bool turn_direction) {
 // Get heading from the compass
 float get_heading() {
   // Get a new sensor event 
-  sensors_event_t event; 
-  mag.getEvent(&event);  
-  return ( ( (atan2(event.magnetic.x,event.magnetic.y) * 180) / PI ) + 180 );
+  //sensors_event_t event; 
+  //mag.getEvent(&event);  
+  //return ( ( (atan2(event.magnetic.x,event.magnetic.y) * 180) / PI ) + 180 );
+  return Compass.GetHeadingDegrees();
 }
 
 // Function to command a given motor of the robot
