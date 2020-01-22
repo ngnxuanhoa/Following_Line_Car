@@ -138,7 +138,7 @@ float get_heading() {
   // Get a new sensor event 
   sensors_event_t event; 
   mag.getEvent(&event);  
-  return ( ( (atan2(event.magnetic.x,event.magnetic.y) * 180) / 3.14 ) + 180 );
+  return ( ( (atan2(event.magnetic.x,event.magnetic.y) * 180) / PI ) + 180 );
 }
 
 // Function to command a given motor of the robot
