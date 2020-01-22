@@ -81,7 +81,12 @@ void turn(float angle, bool turn_direction) {
     else {
       target_heading = initial_heading - angle;
     }
-    
+    if (target_heading > 360){
+      target_heading = target_heading - 360;
+    }
+    else if (target_heading < 0){
+      target_heading = target_heading + 360;
+    }
     Serial.print("Initial heading: ");
     Serial.println(initial_heading);
     Serial.print("Target heading: ");
@@ -93,15 +98,9 @@ void turn(float angle, bool turn_direction) {
   }
   
   float heading = get_heading();
-  
-  if (turn_direction) {
-    diff_heading = target_heading - heading;
-  }
-  else {
-    diff_heading = heading - target_heading;
-  }
- 
-  while (diff_heading > 0 && !target_reached) {
+  diff_heading = abs(target_heading - heading);
+
+  while (diff_heading > 1 && !target_reached) {
     
     // Move & stop
     if (turn_direction) {
@@ -117,17 +116,13 @@ void turn(float angle, bool turn_direction) {
     // Measure heading again
     float heading = get_heading();
     
-    if (turn_direction) {
-      diff_heading = target_heading - heading;
-    }
-    else {
-      diff_heading = heading - target_heading;
-    }
+    diff_heading = abs(target_heading - heading);
+    
     Serial.println(target_heading);
     Serial.println(heading);
     Serial.print("Difference heading (degrees): "); Serial.println(diff_heading);
     
-    if (diff_heading < 0 && !target_reached) {
+    if (diff_heading < 1 && !target_reached) {
       target_reached = true;
       turn_init = false;
       diff_heading = 0;
@@ -140,30 +135,10 @@ void turn(float angle, bool turn_direction) {
 
 // Get heading from the compass
 float get_heading() {
-  
   // Get a new sensor event 
   sensors_event_t event; 
-  mag.getEvent(&event);
-
-  // Calculate heading based on magnetic intensity in X & Y axis
-  float heading = atan2(event.magnetic.y, event.magnetic.x);
-  
-  // Correct for when signs are reversed.
-  if(heading < 0)
-    heading += 2*PI;
-    
-  // Check for wrap due to addition of declination.
-  if(heading > 2*PI)
-    heading -= 2*PI;
-   
-  // Convert radians to degrees for readability.
-  float headingDegrees = heading * 180/M_PI; 
-  if(headingDegrees > 360)
-    return (headingDegrees - 360);
-  else if (headingDegrees < 0)
-    return (360 + headingDegrees);
-  else return headingDegrees;
-  
+  mag.getEvent(&event);  
+  return ( ( (atan2(event.magnetic.x,event.magnetic.y) * 180) / 3.14 ) + 180 );
 }
 
 // Function to command a given motor of the robot
@@ -179,13 +154,10 @@ void send_motor_command(int mt_speed, boolean mt_in1, boolean mt_in2)
 
 // Turn right
 void right(int motor_speed) {
-  
   send_motor_command(motor_speed,0,0);
 }
 
 // Turn left
 void left(int motor_speed) {
-  
   send_motor_command(motor_speed,1,1);
-  
 }
